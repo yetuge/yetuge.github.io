@@ -22,7 +22,7 @@ category: 站务
 interface Post {
   title: string;
   pubDate: Date;
-  tags: string[];
+  category?: string;
 }
 
 export function sortByDate(posts: Post[]): Post[] {

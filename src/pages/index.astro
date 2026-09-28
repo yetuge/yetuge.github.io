@@ -18,7 +18,7 @@ const years = groupByYear(posts);
       <p class="hero-type mono">
         <span id="type-line"><span class="type-text"></span><span class="type-caret" aria-hidden="true"></span></span>
       </p>
-      <div class="hero-tags">
+      <div class="hero-actions">
         <a class="hero-chip mono" href={withBase('/archive/')}>❯ 归档</a>
         <a class="hero-chip mono" href={withBase('/about/')}>❯ 关于</a>
       </div>
@@ -168,7 +168,7 @@ const years = groupByYear(posts);
     animation: blink 1.1s steps(2, start) infinite;
   }
 
-  .hero-tags {
+  .hero-actions {
     display: flex;
     justify-content: center;
     gap: 0.9rem;
