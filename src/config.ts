@@ -13,7 +13,7 @@ export const SITE = {
   description: '记录学习、踩坑与思考的地方。',
   /** 社交链接，留空字符串则不显示 */
   links: {
-    github: 'https://github.com/yourname',
+    github: 'https://github.com/yetuge',
     email: '',
     bilibili: '',
     zhihu: '',

@@ -82,10 +82,10 @@ git push origin main
 
 ---
 
-图片语法和标准 Markdown 一致：把图片放进 `public/` 目录，引用时路径带上部署前缀（当前为 `/blog`）。例如把 `avatar.png` 放进 `public/` 后这样写：
+图片语法和标准 Markdown 一致：把图片放进 `public/` 目录后直接引用。例如把 `avatar.png` 放进 `public/` 后这样写：
 
 ```markdown
-![头像说明文字](/blog/avatar.png)
+![头像说明文字](/avatar.png)
 ```
 
-> 注意：`public/` 里的文件不会被自动加前缀，引用路径要手动带上 `/blog`。如果以后换了仓库名，记得同步改文章里的图片路径。
+> 注意：本站部署在根路径（`yetuge.github.io`），引用 `/avatar.png` 即可。如果以后改成子路径部署（`base: '/blog'`），文章里的图片路径要同步加上前缀。

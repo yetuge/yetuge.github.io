@@ -17,7 +17,7 @@ description: 关于我，以及这个博客。
 
 ## 找到我
 
-- GitHub：[github.com/yourname](https://github.com/yourname)
+- GitHub：[github.com/yetuge](https://github.com/yetuge)
 - 邮箱：`you@example.com`（在 `src/config.ts` 里配置）
 
 ---
