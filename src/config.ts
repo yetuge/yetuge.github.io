@@ -7,10 +7,10 @@ export const SITE = {
   title: '个人博客',
   /** 页头品牌名，走终端风，一般不用改 */
   name: 'blog',
-  /** 你的名字（TODO: 改成你的昵称） */
-  author: '阿汤',
-  /** 一句话介绍（TODO: 改成你自己的） */
-  description: '记录学习、踩坑与思考的地方。',
+  /** 你的名字 */
+  author: 'yetuge',
+  /** 一句话介绍 */
+  description: '南航学生，开源贡献者；记录学习、踩坑与思考。',
   /** 社交链接，留空字符串则不显示 */
   links: {
     github: 'https://github.com/yetuge',
