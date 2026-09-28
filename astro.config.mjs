@@ -3,9 +3,8 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  // 个人主页仓库：博客部署在 https://yetuge.github.io/ 根路径
-  // 若以后改用普通仓库（如 blog），把 base 改为 '/blog' 并同步文章里的图片路径
-  site: 'https://yetuge.github.io',
+  // 主部署：Vercel（push 自动部署）；GitHub Pages 同步镜像（如不再需要可删 .github/workflows/deploy.yml）
+  site: 'https://yetuge-blog.vercel.app',
   base: '/',
   trailingSlash: 'always',
   integrations: [sitemap()],
