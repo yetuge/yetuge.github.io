@@ -12,7 +12,7 @@ const nav = [
 ];
 ---
 
-<header class="site-header">
+<header class="site-header" id="site-header">
   <div class="shell header-inner">
     <a class="brand mono" href={withBase('/')} aria-label="回到首页">~/{SITE.name}<span
         class="cursor"
@@ -44,11 +44,19 @@ const nav = [
 
 <style>
   .site-header {
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
     position: sticky;
     top: 0;
     z-index: 5;
+    border-bottom: 1px solid transparent;
+    transition: background 0.25s, border-color 0.25s, backdrop-filter 0.25s;
+  }
+
+  /* 滚动后变玻璃拟态（JS 加 .scrolled） */
+  .site-header.scrolled {
+    background: color-mix(in srgb, var(--bg) 72%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom-color: var(--border);
   }
 
   .header-inner {
@@ -104,8 +112,8 @@ const nav = [
     width: 2rem;
     height: 2rem;
     border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--surface);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface) 80%, transparent);
     color: var(--text-muted);
     cursor: pointer;
     transition: color 0.15s, border-color 0.15s;
@@ -141,8 +149,20 @@ const nav = [
 </style>
 
 <script>
-  const btn = document.getElementById('theme-toggle');
-  btn?.addEventListener('click', () => {
+  // 首页首屏在顶部时导航保持透明，滚动后进入玻璃态
+  const header = document.getElementById('site-header');
+  const hero = document.getElementById('hero') ?? document.querySelector('.page-head-spacer');
+  if (header) {
+    const onScroll = () => {
+      // 首页：滚过首屏 60% 后变玻璃；其他页：一滚就变
+      const threshold = hero ? hero.offsetHeight * 0.6 : 8;
+      header.classList.toggle('scrolled', window.scrollY > threshold);
+    };
+    onScroll();
+    addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
     localStorage.setItem('theme', next);

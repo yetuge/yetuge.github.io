@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import TagPill from '../../components/TagPill.astro';
 import { fmtDate, readingTime, withBase } from '../../utils/site';
 
 export async function getStaticPaths() {
@@ -45,9 +46,9 @@ const older = idx >= 0 && idx < posts.length - 1 ? posts[idx + 1] : undefined;
     <footer class="post-footer">
       {
         tags.length > 0 && (
-          <div class="post-tags mono">
+          <div class="post-tags">
             {tags.map((tag) => (
-              <a href={withBase(`/tags/${tag}/`)}>#{tag}</a>
+              <TagPill tag={tag} link />
             ))}
           </div>
         )

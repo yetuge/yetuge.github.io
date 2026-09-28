@@ -18,13 +18,26 @@
   --accent-soft: rgba(11, 114, 133, 0.09);
   --mark: rgba(11, 114, 133, 0.22);
 
+  /* Butterfly 精髓：柔和多彩的胶囊/渐变 */
+  --pill-1: #0b7285;
+  --pill-2: #7048a8;
+  --pill-3: #c2487c;
+  --pill-4: #b0602a;
+  --pill-5: #2f8a4c;
+  --hero-glow-1: rgba(11, 114, 133, 0.16);
+  --hero-glow-2: rgba(192, 72, 124, 0.1);
+  --hero-glow-3: rgba(112, 72, 168, 0.12);
+
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
     "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --font-mono: "Cascadia Code", "JetBrains Mono", ui-monospace, SFMono-Regular,
     Menlo, Consolas, "Liberation Mono", monospace;
 
   --shell: 47rem;
-  --radius: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --shadow-card: 0 1px 2px rgba(23, 34, 43, 0.04), 0 4px 16px rgba(23, 34, 43, 0.06);
+  --shadow-card-hover: 0 2px 4px rgba(23, 34, 43, 0.06), 0 12px 32px rgba(23, 34, 43, 0.12);
 
   color-scheme: light;
 }
@@ -41,6 +54,18 @@
   --accent-strong: #8adfe9;
   --accent-soft: rgba(86, 200, 216, 0.1);
   --mark: rgba(86, 200, 216, 0.28);
+
+  --pill-1: #56c8d8;
+  --pill-2: #b18ae8;
+  --pill-3: #f08bab;
+  --pill-4: #e8a06c;
+  --pill-5: #7fd194;
+  --hero-glow-1: rgba(86, 200, 216, 0.13);
+  --hero-glow-2: rgba(240, 139, 171, 0.09);
+  --hero-glow-3: rgba(177, 138, 232, 0.11);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.5);
 
   color-scheme: dark;
 }
@@ -108,6 +133,27 @@ input:focus-visible {
 .prompt {
   color: var(--accent);
   user-select: none;
+}
+
+/* 彩色标签胶囊（Butterfly 风格，按标签名哈希取色） */
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-family: var(--font-mono);
+  font-size: 0.7813rem;
+  line-height: 1;
+  padding: 0.32em 0.75em;
+  border-radius: 999px;
+  color: var(--pill-c, var(--accent));
+  background: color-mix(in srgb, var(--pill-c, var(--accent)) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pill-c, var(--accent)) 30%, transparent);
+  transition: background 0.15s, color 0.15s;
+}
+
+a.tag-pill:hover {
+  background: var(--pill-c, var(--accent));
+  color: #fff;
 }
 
 /* 闪烁光标 */

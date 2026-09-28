@@ -3,66 +3,221 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import { SITE } from '../config';
-import { groupByYear } from '../utils/site';
+import { groupByYear, withBase } from '../utils/site';
 
 const posts = (await getCollection('posts')).sort((a, b) => b.data.pubDate - a.data.pubDate);
 const years = groupByYear(posts);
 ---
 
 <BaseLayout>
-  <div class="hero mono">
-    <p class="hero-line"><span class="prompt">❯</span> whoami</p>
-    <p class="hero-out">
-      <strong>{SITE.author}</strong><br />
-      {SITE.description}
-    </p>
-    <p class="hero-line">
-      <span class="prompt">❯</span> ls ./posts --sort=time<span class="cursor" aria-hidden="true"></span>
-    </p>
+  <section class="hero" id="hero" aria-label="博客介绍">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-inner shell">
+      <p class="hero-kicker mono"><span class="prompt">❯</span> whoami</p>
+      <h1 class="hero-title">你好，我是 {SITE.author}<span class="cursor" aria-hidden="true"></span></h1>
+      <p class="hero-type mono">
+        <span id="type-line"><span class="type-text"></span><span class="type-caret" aria-hidden="true"></span></span>
+      </p>
+      <div class="hero-tags">
+        <a class="hero-chip mono" href={withBase('/archive/')}>❯ 归档</a>
+        <a class="hero-chip mono" href={withBase('/about/')}>❯ 关于</a>
+      </div>
+    </div>
+    <a class="scroll-hint" href="#posts" aria-label="向下滚动查看文章">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 9l6 6 6-6"></path>
+      </svg>
+    </a>
+  </section>
+
+  <div class="shell" id="posts">
+    {
+      years.map(([year, yearPosts]) => (
+        <section class="year-group">
+          <h2 class="year-label mono"># {year}</h2>
+          <div class="card-list">
+            {yearPosts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+
+    {
+      posts.length === 0 && (
+        <p class="empty mono">还没有文章。把 Markdown 文件放进 src/content/posts/ 就会出现。</p>
+      )
+    }
   </div>
-
-  {
-    years.map(([year, yearPosts]) => (
-      <section class="year-group">
-        <h2 class="year-label mono"># {year}</h2>
-        <div class="card-list">
-          {yearPosts.map((post) => (
-            <PostCard post={post} />
-          ))}
-        </div>
-      </section>
-    ))
-  }
-
-  {
-    posts.length === 0 && (
-      <p class="empty mono">还没有文章。把 Markdown 文件放进 src/content/posts/ 就会出现。</p>
-    )
-  }
 </BaseLayout>
 
+<script>
+  // 打字机欢迎语（Butterfly 精髓），循环播放多句
+  const lines = [
+    '南航学生，开源贡献者。',
+    '记录学习、踩坑与思考。',
+    '把「大概懂了」变成「讲得清楚」。',
+  ];
+  const el = document.querySelector<HTMLElement>('.type-text');
+  if (el) {
+    let li = 0;
+    let ci = 0;
+    let deleting = false;
+    const tick = () => {
+      const line = lines[li]!;
+      ci += deleting ? -1 : 1;
+      el.textContent = line.slice(0, ci);
+      let delay = deleting ? 40 : 110;
+      if (!deleting && ci === line.length) {
+        delay = 2200; // 停留
+        deleting = true;
+      } else if (deleting && ci === 0) {
+        deleting = false;
+        li = (li + 1) % lines.length;
+        delay = 400;
+      }
+      setTimeout(tick, delay);
+    };
+    tick();
+  }
+
+  // 下滑箭头平滑滚动
+  document.querySelector('.scroll-hint')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('posts')?.scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+
 <style>
+  /* ---------- 沉浸式首屏 ---------- */
   .hero {
-    margin-bottom: 2.8rem;
+    position: relative;
+    min-height: calc(100svh - 0px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -4.4rem; /* 抵消 header 高度，实现导航悬浮在首屏上 */
+    overflow: hidden;
   }
 
-  .hero-line {
-    margin: 0.3rem 0;
-    font-size: 0.9375rem;
-    color: var(--text);
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(42rem 30rem at 18% 22%, var(--hero-glow-1), transparent 65%),
+      radial-gradient(38rem 26rem at 82% 30%, var(--hero-glow-2), transparent 62%),
+      radial-gradient(46rem 34rem at 55% 85%, var(--hero-glow-3), transparent 68%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg) 100%);
   }
 
-  .hero-out {
-    margin: 0.35rem 0 0.9rem;
-    padding-left: 1.35rem;
-    font-family: var(--font-sans);
-    font-size: 0.9375rem;
+  /* 细网格，增加插画式的画面密度 */
+  .hero-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(70rem 40rem at 50% 45%, rgba(0, 0, 0, 0.5), transparent 72%);
+    -webkit-mask-image: radial-gradient(70rem 40rem at 50% 45%, rgba(0, 0, 0, 0.5), transparent 72%);
+    opacity: 0.55;
+  }
+
+  .hero-inner {
+    position: relative;
+    text-align: center;
+    padding-block: 6rem;
+  }
+
+  .hero-kicker {
+    font-size: 0.875rem;
     color: var(--text-muted);
+    margin: 0 0 0.8rem;
   }
 
-  .hero-out strong {
+  .hero-title {
+    font-size: clamp(2rem, 6.5vw, 3.2rem);
+    line-height: 1.25;
+    font-weight: 750;
+    letter-spacing: 0.01em;
+    margin: 0 0 1rem;
+  }
+
+  .hero-title .cursor {
+    height: 0.9em;
+    width: 0.45em;
+    margin-left: 0.08em;
+  }
+
+  .hero-type {
+    min-height: 1.8em;
+    font-size: clamp(0.9375rem, 2.6vw, 1.125rem);
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .type-caret {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.05em;
+    margin-left: 0.12em;
+    background: var(--accent);
+    vertical-align: text-bottom;
+    animation: blink 1.1s steps(2, start) infinite;
+  }
+
+  .hero-tags {
+    display: flex;
+    justify-content: center;
+    gap: 0.9rem;
+    margin-top: 2rem;
+  }
+
+  .hero-chip {
+    font-size: 0.8438rem;
     color: var(--text);
-    font-weight: 650;
+    background: color-mix(in srgb, var(--surface) 72%, transparent);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .hero-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 2rem;
+    transform: translateX(-50%);
+    color: var(--text-muted);
+    animation: bob 2.2s ease-in-out infinite;
+  }
+
+  .scroll-hint:hover {
+    color: var(--accent);
+  }
+
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translate(-50%, 0);
+    }
+    50% {
+      transform: translate(-50%, 8px);
+    }
+  }
+
+  /* ---------- 文章区 ---------- */
+  #posts {
+    padding-top: 3.5rem;
   }
 
   .year-group + .year-group {
@@ -78,7 +233,7 @@ const years = groupByYear(posts);
 
   .card-list {
     display: grid;
-    gap: 0.9rem;
+    gap: 1.1rem;
   }
 
   .empty {

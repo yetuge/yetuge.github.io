@@ -4,29 +4,42 @@ import { withBase } from '../utils/site';
 
 const year = new Date().getFullYear();
 const yearRange = year > SITE_START_YEAR ? `${SITE_START_YEAR}–${year}` : `${year}`;
+/** 页脚格言：想换就改这一行 */
+const motto = '我们都在阴沟里，但仍有人仰望星空。';
 ---
 
 <footer class="site-footer">
-  <div class="shell footer-inner mono">
-    <span>&copy; {yearRange} {SITE.author}</span>
-    <span class="footer-links">
-      <a href={withBase('/rss.xml')}>rss</a>
-      <a href={withBase('/sitemap-index.xml')}>sitemap</a>
-      {
-        SITE.links.github && (
-          <a href={SITE.links.github} target="_blank" rel="noopener noreferrer">
-            github
-          </a>
-        )
-      }
-      <span class="exit">exit 0</span>
-    </span>
+  <div class="shell">
+    <p class="motto">「{motto}」</p>
+    <div class="footer-inner mono">
+      <span>&copy; {yearRange} {SITE.author}</span>
+      <span class="footer-links">
+        <a href={withBase('/rss.xml')}>rss</a>
+        <a href={withBase('/sitemap-index.xml')}>sitemap</a>
+        {
+          SITE.links.github && (
+            <a href={SITE.links.github} target="_blank" rel="noopener noreferrer">
+              github
+            </a>
+          )
+        }
+        <span class="exit">exit 0</span>
+      </span>
+    </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
     border-top: 1px solid var(--border);
+  }
+
+  .motto {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0;
+    padding: 1.4rem 1rem 0;
   }
 
   .footer-inner {

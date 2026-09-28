@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { withBase, fmtDate } from '../utils/site';
+import TagPill from './TagPill.astro';
 
 interface Props {
   post: CollectionEntry<'posts'>;
@@ -14,19 +15,20 @@ const { title, description, pubDate, tags, category } = post.data;
   <a class="card-link" href={withBase(`/posts/${post.id}/`)}>
     <div class="card-meta mono">
       <time datetime={pubDate.toISOString()}>{fmtDate(pubDate)}</time>
+      {/* 分类用纯文本：外层已是 <a>，锚点不可嵌套 */}
       {category && <span class="card-cat">[{category}]</span>}
     </div>
     <h3 class="card-title">{title}</h3>
     <p class="card-desc">{description}</p>
     {
       tags.length > 0 && (
-        <div class="card-tags mono" aria-label="标签">
+        <div class="card-tags">
           {tags.map((tag) => (
-            <span>#{tag}</span>
+            <TagPill tag={tag} />
           ))}
         </div>
       )
-    }
+    }    <span class="card-arrow mono" aria-hidden="true">→</span>
   </a>
 </article>
 
@@ -34,17 +36,21 @@ const { title, description, pubDate, tags, category } = post.data;
   .post-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    transition: border-color 0.15s;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
   }
 
   .post-card:hover {
-    border-color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-3px);
   }
 
   .card-link {
     display: block;
-    padding: 1.05rem 1.3rem 1.15rem;
+    position: relative;
+    padding: 1.25rem 1.5rem 1.35rem;
     height: 100%;
   }
 
@@ -60,22 +66,15 @@ const { title, description, pubDate, tags, category } = post.data;
   }
 
   .card-title {
-    font-size: 1.0625rem;
-    font-weight: 650;
+    font-size: 1.125rem;
+    font-weight: 700;
     line-height: 1.5;
-    margin: 0.35rem 0 0.3rem;
+    margin: 0.45rem 0 0.35rem;
+    transition: color 0.15s;
   }
 
   .post-card:hover .card-title {
     color: var(--accent);
-  }
-
-  .post-card:hover .card-title::before {
-    content: "❯ ";
-    color: var(--accent);
-    font-family: var(--font-mono);
-    font-weight: 500;
-    font-size: 0.85em;
   }
 
   .card-desc {
@@ -92,9 +91,24 @@ const { title, description, pubDate, tags, category } = post.data;
   .card-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem 0.9rem;
-    margin-top: 0.7rem;
-    font-size: 0.7813rem;
-    color: var(--text-muted);
+    gap: 0.45rem;
+    margin-top: 0.8rem;
+  }
+
+  .card-arrow {
+    position: absolute;
+    right: 1.4rem;
+    top: 1.4rem;
+    color: var(--border-strong);
+    font-size: 0.9375rem;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.2s, transform 0.2s, color 0.2s;
+  }
+
+  .post-card:hover .card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+    color: var(--accent);
   }
 </style>

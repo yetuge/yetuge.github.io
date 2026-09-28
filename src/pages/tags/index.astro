@@ -1,7 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { countBy, withBase } from '../../utils/site';
+import TagPill from '../../components/TagPill.astro';
+import { countBy } from '../../utils/site';
 
 const posts = await getCollection('posts', ({ data }) => !data.draft);
 const tags = [...countBy(posts, 'tags')].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh'));
@@ -11,12 +12,13 @@ const tags = [...countBy(posts, 'tags')].sort((a, b) => b[1] - a[1] || a[0].loca
   <p class="crumb">~/tags/</p>
   <h1 class="page-title">标签</h1>
 
-  <div class="tag-cloud mono">
+  <div class="tag-cloud">
     {
       tags.map(([tag, count]) => (
-        <a class="tag-chip" href={withBase(`/tags/${tag}/`)}>
-          {tag} <span class="count">× {count}</span>
-        </a>
+        <span class="tag-item">
+          <TagPill tag={tag} link />
+          <span class="count mono">× {count}</span>
+        </span>
       ))
     }
   </div>
@@ -28,27 +30,19 @@ const tags = [...countBy(posts, 'tags')].sort((a, b) => b[1] - a[1] || a[0].loca
   .tag-cloud {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.7rem;
+    gap: 0.8rem 1rem;
+    align-items: center;
   }
 
-  .tag-chip {
-    font-size: 0.875rem;
-    color: var(--text);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 0.3rem 0.9rem;
-    transition: border-color 0.15s, color 0.15s;
-  }
-
-  .tag-chip:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+  .tag-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
   }
 
   .count {
-    color: var(--text-muted);
     font-size: 0.7813rem;
+    color: var(--text-muted);
   }
 
   .empty {
