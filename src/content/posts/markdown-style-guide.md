@@ -2,8 +2,7 @@
 title: Markdown 写作元素速查
 description: 一篇文章过一遍博客支持的 Markdown 元素：标题、列表、引用、代码块、表格、图片，写文章时可以对照着用。
 pubDate: 2026-09-24
-category: 教程
-tags: [Markdown, 写作]
+category: 站务
 ---
 
 这篇文章本身就是一个「元素展示页」：写文章时想不起某个语法怎么写，翻到这里照着抄就行。
@@ -51,7 +50,7 @@ git push origin main
 有序列表：
 
 1. 新建一个 `.md` 文件放进 `src/content/posts/`
-2. 补上 frontmatter（标题、日期、标签）
+2. 补上 frontmatter（标题、日期、分类）
 3. `git push`，CI 自动构建发布
 
 无序列表：
@@ -74,7 +73,6 @@ git push origin main
 
 | 语法 | 用途 | 备注 |
 | ---- | ---- | ---- |
-| `#tag` | 标签 | 可多个，横切主题 |
 | 分类 | 单个 | 纵向归类 |
 | draft | 草稿开关 | `true` 时构建不输出 |
 

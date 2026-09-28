@@ -135,27 +135,6 @@ input:focus-visible {
   user-select: none;
 }
 
-/* 彩色标签胶囊（Butterfly 风格，按标签名哈希取色） */
-.tag-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3em;
-  font-family: var(--font-mono);
-  font-size: 0.7813rem;
-  line-height: 1;
-  padding: 0.32em 0.75em;
-  border-radius: 999px;
-  color: var(--pill-c, var(--accent));
-  background: color-mix(in srgb, var(--pill-c, var(--accent)) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--pill-c, var(--accent)) 30%, transparent);
-  transition: background 0.15s, color 0.15s;
-}
-
-a.tag-pill:hover {
-  background: var(--pill-c, var(--accent));
-  color: #fff;
-}
-
 /* 闪烁光标 */
 .cursor {
   display: inline-block;
@@ -383,7 +362,7 @@ a.tag-pill:hover {
   border-radius: 4px;
 }
 
-/* ---------- 文章列表行（归档/标签/分类页用） ---------- */
+/* ---------- 文章列表行（归档/分类页用） ---------- */
 .post-row {
   display: flex;
   align-items: baseline;

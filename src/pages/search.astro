@@ -97,7 +97,6 @@ import { withBase } from '../utils/site';
   interface IndexItem {
     title: string;
     description: string;
-    tags: string[];
     category: string;
     date: string;
     url: string;
@@ -163,9 +162,9 @@ import { withBase } from '../utils/site';
     for (const item of index) {
       const title = item.title.toLowerCase();
       const desc = item.description.toLowerCase();
-      const tags = item.tags.join(' ').toLowerCase() + ' ' + item.category.toLowerCase();
+      const category = item.category.toLowerCase();
       const text = item.text.toLowerCase();
-      if (!terms.every((t) => title.includes(t) || desc.includes(t) || tags.includes(t) || text.includes(t))) continue;
+      if (!terms.every((t) => title.includes(t) || desc.includes(t) || category.includes(t) || text.includes(t))) continue;
       // 标题命中排最前
       const score = terms.every((t) => title.includes(t)) ? 0 : desc.includes(terms[terms.length - 1]) ? 1 : 2;
       hits.push({ item, score });

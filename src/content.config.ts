@@ -12,8 +12,6 @@ const posts = defineCollection({
     pubDate: z.coerce.date(),
     /** 最后修改日期，可选 */
     updatedDate: z.coerce.date().optional(),
-    /** 标签，可多个 */
-    tags: z.array(z.string()).default([]),
     /** 分类，单个，可选 */
     category: z.string().optional(),
     /** 草稿：true 时正式构建中不显示 */

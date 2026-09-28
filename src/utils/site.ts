@@ -43,18 +43,13 @@ export function groupByYear<T extends { data: { pubDate: Date } }>(items: T[]): 
   return [...map.entries()];
 }
 
-/** 统计集合中某个字段的出现次数（标签/分类用） */
-export function countBy(
-  items: { data: { tags?: string[]; category?: string } }[],
-  key: 'tags' | 'category'
-): Map<string, number> {
+/** 统计分类的出现次数 */
+export function countByCategory(items: { data: { category?: string } }[]): Map<string, number> {
   const map = new Map<string, number>();
   for (const item of items) {
-    const values = key === 'tags' ? (item.data.tags ?? []) : [item.data.category ?? ''];
-    for (const v of values) {
-      if (!v) continue;
-      map.set(v, (map.get(v) ?? 0) + 1);
-    }
+    const v = item.data.category;
+    if (!v) continue;
+    map.set(v, (map.get(v) ?? 0) + 1);
   }
   return map;
 }

@@ -1,9 +1,8 @@
 ---
 title: 如何发布一篇新文章
 description: 从新建 Markdown 文件到自动发布上线的完整流程，以及 frontmatter 字段速查。
-pubDate: 2026-09-20
-category: 教程
-tags: [Astro, 写作]
+pubDate: 2026-09-28
+category: 站务
 ---
 
 把发布流程记录下来，省得每次都要回忆一遍。整个过程只有三步。
@@ -29,8 +28,7 @@ title: 文章标题            # 必填
 description: 一两句摘要    # 必填，列表和 RSS 里会显示
 pubDate: 2026-09-28       # 必填，发布日期
 updatedDate: 2026-10-01   # 可选，修改日期
-category: 教程             # 可选，单分类
-tags: [Astro, 写作]        # 可选，多标签
+category: 学习笔记         # 可选，单分类
 draft: false               # 可选，true 时草稿不发布
 ---
 ```
@@ -53,7 +51,6 @@ npm run build    # 构建产物到 dist/
 npm run preview  # 预览正式构建结果（草稿不显示）
 ```
 
-## 两个约定
+## 一个约定
 
 - **摘要（description）认真写**：它是首页卡片、RSS 和搜索结果里的第一印象，比标题多承担一层信息。
-- **标签宁少勿多**：一篇 1~3 个足够，标签体系是横向的（主题），分类是纵向的（栏目），不要混用。

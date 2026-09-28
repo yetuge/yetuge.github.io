@@ -1,6 +1,6 @@
 # 个人博客
 
-基于 [Astro](https://astro.build) 的静态个人博客，部署在 GitHub Pages。终端风界面，支持深浅色切换、标签/分类、全文搜索、RSS 和 Sitemap。
+基于 [Astro](https://astro.build) 的静态个人博客，部署在 GitHub Pages。终端风界面，支持深浅色切换、分类、全文搜索、RSS 和 Sitemap。
 
 ## 常用命令
 
@@ -19,8 +19,7 @@ npm run preview  # 预览正式构建结果
 title: 文章标题            # 必填
 description: 一两句摘要    # 必填
 pubDate: 2026-09-28       # 必填
-category: 教程             # 可选，单分类
-tags: [Astro, 写作]        # 可选，多标签
+category: 学习笔记         # 可选，单分类
 draft: true                # 可选，草稿不发布
 ---
 ```

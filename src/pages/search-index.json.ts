@@ -13,7 +13,6 @@ export async function GET() {
   const index = posts.map((post) => ({
     title: post.data.title,
     description: post.data.description,
-    tags: post.data.tags,
     category: post.data.category ?? '',
     date: post.data.pubDate.toISOString().slice(0, 10),
     url: withBase(`/posts/${post.id}/`),

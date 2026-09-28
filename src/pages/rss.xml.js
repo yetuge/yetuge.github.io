@@ -17,7 +17,7 @@ export async function GET(context) {
       title: post.data.title,
       description: post.data.description,
       pubDate: post.data.pubDate,
-      categories: [...(post.data.category ? [post.data.category] : []), ...post.data.tags],
+      categories: post.data.category ? [post.data.category] : [],
       // withBase 已包含部署前缀，绝对地址由 @astrojs/rss 拼接
       link: withBase(`/posts/${post.id}/`),
     })),

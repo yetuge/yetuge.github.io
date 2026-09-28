@@ -1,14 +1,13 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { withBase, fmtDate } from '../utils/site';
-import TagPill from './TagPill.astro';
 
 interface Props {
   post: CollectionEntry<'posts'>;
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, tags, category } = post.data;
+const { title, description, pubDate, category } = post.data;
 ---
 
 <article class="post-card">
@@ -20,15 +19,7 @@ const { title, description, pubDate, tags, category } = post.data;
     </div>
     <h3 class="card-title">{title}</h3>
     <p class="card-desc">{description}</p>
-    {
-      tags.length > 0 && (
-        <div class="card-tags">
-          {tags.map((tag) => (
-            <TagPill tag={tag} />
-          ))}
-        </div>
-      )
-    }    <span class="card-arrow mono" aria-hidden="true">→</span>
+    <span class="card-arrow mono" aria-hidden="true">→</span>
   </a>
 </article>
 
@@ -86,13 +77,6 @@ const { title, description, pubDate, tags, category } = post.data;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-
-  .card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-top: 0.8rem;
   }
 
   .card-arrow {
