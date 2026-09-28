@@ -123,16 +123,16 @@ const nav = [
     border-color: var(--accent);
   }
 
-  /* 浅色显示月亮（点击变暗），深色显示太阳 */
+  /* 深色（默认）显示太阳（点击变亮），浅色显示月亮（点击变暗） */
   .icon-moon {
     display: none;
   }
 
-  :global([data-theme="dark"]) .icon-sun {
+  :global([data-theme="light"]) .icon-sun {
     display: none;
   }
 
-  :global([data-theme="dark"]) .icon-moon {
+  :global([data-theme="light"]) .icon-moon {
     display: block;
   }
 

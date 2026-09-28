@@ -5,44 +5,7 @@
 
 /* ---------- 设计令牌 ---------- */
 :root {
-  /* 浅色主题（默认，无 JS 时回退到浅色） */
-  --bg: #fafbfc;
-  --surface: #ffffff;
-  --surface-2: #f1f4f6;
-  --border: #e3e9ee;
-  --border-strong: #c9d3db;
-  --text: #17222b;
-  --text-muted: #5e6c78;
-  --accent: #0b7285;
-  --accent-strong: #076878;
-  --accent-soft: rgba(11, 114, 133, 0.09);
-  --mark: rgba(11, 114, 133, 0.22);
-
-  /* Butterfly 精髓：柔和多彩的胶囊/渐变 */
-  --pill-1: #0b7285;
-  --pill-2: #7048a8;
-  --pill-3: #c2487c;
-  --pill-4: #b0602a;
-  --pill-5: #2f8a4c;
-  --hero-glow-1: rgba(11, 114, 133, 0.16);
-  --hero-glow-2: rgba(192, 72, 124, 0.1);
-  --hero-glow-3: rgba(112, 72, 168, 0.12);
-
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
-    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --font-mono: "Cascadia Code", "JetBrains Mono", ui-monospace, SFMono-Regular,
-    Menlo, Consolas, "Liberation Mono", monospace;
-
-  --shell: 47rem;
-  --radius: 12px;
-  --radius-lg: 18px;
-  --shadow-card: 0 1px 2px rgba(23, 34, 43, 0.04), 0 4px 16px rgba(23, 34, 43, 0.06);
-  --shadow-card-hover: 0 2px 4px rgba(23, 34, 43, 0.06), 0 12px 32px rgba(23, 34, 43, 0.12);
-
-  color-scheme: light;
-}
-
-[data-theme="dark"] {
+  /* 深色主题（默认态，无 JS 时同样回退到深色） */
   --bg: #0c1116;
   --surface: #121a23;
   --surface-2: #0e151d;
@@ -55,6 +18,7 @@
   --accent-soft: rgba(86, 200, 216, 0.1);
   --mark: rgba(86, 200, 216, 0.28);
 
+  /* Butterfly 精髓：柔和多彩的胶囊/渐变 */
   --pill-1: #56c8d8;
   --pill-2: #b18ae8;
   --pill-3: #f08bab;
@@ -64,10 +28,47 @@
   --hero-glow-2: rgba(240, 139, 171, 0.09);
   --hero-glow-3: rgba(177, 138, 232, 0.11);
 
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: "Cascadia Code", "JetBrains Mono", ui-monospace, SFMono-Regular,
+    Menlo, Consolas, "Liberation Mono", monospace;
+
+  --shell: 47rem;
+  --radius: 12px;
+  --radius-lg: 18px;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.35);
   --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.5);
 
   color-scheme: dark;
+}
+
+/* 浅色主题：仅当用户手动切换过（localStorage 记住选择）时启用 */
+[data-theme="light"] {
+  --bg: #fafbfc;
+  --surface: #ffffff;
+  --surface-2: #f1f4f6;
+  --border: #e3e9ee;
+  --border-strong: #c9d3db;
+  --text: #17222b;
+  --text-muted: #5e6c78;
+  --accent: #0b7285;
+  --accent-strong: #076878;
+  --accent-soft: rgba(11, 114, 133, 0.09);
+  --mark: rgba(11, 114, 133, 0.22);
+
+  --pill-1: #0b7285;
+  --pill-2: #7048a8;
+  --pill-3: #c2487c;
+  --pill-4: #b0602a;
+  --pill-5: #2f8a4c;
+  --hero-glow-1: rgba(11, 114, 133, 0.16);
+  --hero-glow-2: rgba(192, 72, 124, 0.1);
+  --hero-glow-3: rgba(112, 72, 168, 0.12);
+
+  --shadow-card: 0 1px 2px rgba(23, 34, 43, 0.04), 0 4px 16px rgba(23, 34, 43, 0.06);
+  --shadow-card-hover: 0 2px 4px rgba(23, 34, 43, 0.06), 0 12px 32px rgba(23, 34, 43, 0.12);
+
+  color-scheme: light;
 }
 
 /* ---------- 基础 ---------- */
@@ -79,6 +80,13 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+}
+
+/* 目录/锚点跳转平滑滚动（用户偏好减少动效时不启用） */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -339,18 +347,18 @@ input:focus-visible {
 
 .astro-code,
 .astro-code span {
-  color: var(--shiki-light);
-  background-color: var(--shiki-light-bg);
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
   font-family: var(--font-mono);
 }
 
-[data-theme="dark"] .astro-code,
-[data-theme="dark"] .astro-code span {
-  color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
-  font-style: var(--shiki-dark-font-style) !important;
-  font-weight: var(--shiki-dark-font-weight) !important;
-  text-decoration: var(--shiki-dark-text-decoration) !important;
+[data-theme="light"] .astro-code,
+[data-theme="light"] .astro-code span {
+  color: var(--shiki-light) !important;
+  background-color: var(--shiki-light-bg) !important;
+  font-style: var(--shiki-light-font-style) !important;
+  font-weight: var(--shiki-light-font-weight) !important;
+  text-decoration: var(--shiki-light-text-decoration) !important;
 }
 
 .astro-code::-webkit-scrollbar {
