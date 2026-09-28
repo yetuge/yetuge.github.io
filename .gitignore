@@ -1,0 +1,18 @@
+# 构建产物与依赖
+node_modules/
+dist/
+.astro/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.local
+.idea/
+.vscode/
+
+# 环境变量
+.env
+.env.*
+
+# ZCode 会话产物
+.zcode/

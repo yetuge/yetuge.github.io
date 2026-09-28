@@ -1,0 +1,49 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { groupByYear, fmtDate, withBase } from '../utils/site';
+
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const years = groupByYear(posts);
+---
+
+<BaseLayout title="归档" description="全部文章，按年份归档。">
+  <p class="crumb">~/archive/</p>
+  <h1 class="page-title">归档 <span class="count mono">{posts.length} 篇</span></h1>
+
+  {
+    years.map(([year, yearPosts]) => (
+      <section class="year-group">
+        <h2 class="year-label mono"># {year}</h2>
+        <div class="rows">
+          {yearPosts.map((post) => (
+            <div class="post-row">
+              <time datetime={post.data.pubDate.toISOString()}>{fmtDate(post.data.pubDate)}</time>
+              <a href={withBase(`/posts/${post.id}/`)}>{post.data.title}</a>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</BaseLayout>
+
+<style>
+  .count {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: 0.6rem;
+  }
+
+  .year-group + .year-group {
+    margin-top: 2.2rem;
+  }
+
+  .year-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 0 0 0.6rem;
+  }
+</style>

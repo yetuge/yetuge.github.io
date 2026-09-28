@@ -1,0 +1,218 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../utils/site';
+---
+
+<BaseLayout title="搜索" description="搜索全站文章。">
+  <p class="crumb">~/search/</p>
+  <h1 class="page-title">搜索</h1>
+
+  <div class="search-box">
+    <label class="prompt mono" for="search-input">❯</label>
+    <input
+      id="search-input"
+      type="search"
+      placeholder="grep 关键词，空格分隔多个词"
+      autocomplete="off"
+      autofocus
+    />
+  </div>
+
+  <p id="search-status" class="status mono" role="status">正在加载索引…</p>
+  <div id="search-results" class="results"></div>
+</BaseLayout>
+
+<style>
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.55rem 0.95rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.15s;
+  }
+
+  .search-box:focus-within {
+    border-color: var(--accent);
+  }
+
+  .search-box input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    outline: none;
+  }
+
+  .search-box input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .search-box input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
+
+  .status {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin: 0 0 1.2rem;
+  }
+
+  .result {
+    border-bottom: 1px solid var(--border);
+    padding: 0.85rem 0;
+  }
+
+  .result-meta {
+    font-size: 0.7813rem;
+    color: var(--text-muted);
+    margin-bottom: 0.15rem;
+  }
+
+  .result-title {
+    font-size: 1rem;
+    font-weight: 650;
+  }
+
+  .result-title:hover {
+    color: var(--accent);
+  }
+
+  .result-desc {
+    margin: 0.25rem 0 0;
+    font-size: 0.9063rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+</style>
+
+<script>
+  import { withBase } from '../utils/site';
+
+  interface IndexItem {
+    title: string;
+    description: string;
+    tags: string[];
+    category: string;
+    date: string;
+    url: string;
+    text: string;
+  }
+
+  const input = document.getElementById('search-input') as HTMLInputElement | null;
+  const statusEl = document.getElementById('search-status')!;
+  const resultsEl = document.getElementById('search-results')!;
+
+  let index: IndexItem[] = [];
+
+  fetch(withBase('/search-index.json'))
+    .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+    .then((data: IndexItem[]) => {
+      index = data;
+      statusEl.textContent = `索引就绪，共 ${data.length} 篇文章。输入开始搜索。`;
+    })
+    .catch(() => {
+      statusEl.textContent = '索引加载失败，请刷新重试。';
+    });
+
+  /** 转义正则特殊字符 */
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  /** 命中词高亮（先按纯文本写入再用 mark 包裹，避免注入） */
+  function highlight(el: HTMLElement, query: RegExp) {
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const targets: Text[] = [];
+    while (walker.nextNode()) {
+      const node = walker.currentNode as Text;
+      query.lastIndex = 0; // /g 正则有状态，每次判断前归零
+      if (node.parentElement?.tagName !== 'MARK' && query.test(node.data)) targets.push(node);
+    }
+    for (const node of targets) {
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      const text = node.data;
+      query.lastIndex = 0;
+      for (let m = query.exec(text); m; m = query.exec(text)) {
+        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        const mark = document.createElement('mark');
+        mark.textContent = m[0];
+        frag.appendChild(mark);
+        last = m.index + m[0].length;
+        if (m[0].length === 0) query.lastIndex++; // 防御空匹配死循环
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      node.replaceWith(frag);
+    }
+  }
+
+  function render(query: string) {
+    resultsEl.textContent = '';
+    const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (terms.length === 0) {
+      statusEl.textContent = `索引就绪，共 ${index.length} 篇文章。输入开始搜索。`;
+      return;
+    }
+
+    const start = performance.now();
+    const hits: { item: IndexItem; score: number }[] = [];
+    for (const item of index) {
+      const title = item.title.toLowerCase();
+      const desc = item.description.toLowerCase();
+      const tags = item.tags.join(' ').toLowerCase() + ' ' + item.category.toLowerCase();
+      const text = item.text.toLowerCase();
+      if (!terms.every((t) => title.includes(t) || desc.includes(t) || tags.includes(t) || text.includes(t))) continue;
+      // 标题命中排最前
+      const score = terms.every((t) => title.includes(t)) ? 0 : desc.includes(terms[terms.length - 1]) ? 1 : 2;
+      hits.push({ item, score });
+    }
+    hits.sort((a, b) => a.score - b.score);
+    const ms = Math.max(1, Math.round(performance.now() - start));
+
+    statusEl.textContent = `${hits.length} 条结果（${ms} ms）`;
+
+    // 每个关键词单独高亮，用 | 合并成一个全局正则
+    const termsRe = new RegExp(terms.map(esc).join('|'), 'gi');
+    for (const { item } of hits.slice(0, 30)) {
+      const row = document.createElement('div');
+      row.className = 'result';
+
+      const meta = document.createElement('div');
+      meta.className = 'result-meta mono';
+      meta.textContent = `${item.date}${item.category ? ' [' + item.category + ']' : ''}`;
+      highlight(meta, termsRe);
+
+      const link = document.createElement('a');
+      link.className = 'result-title';
+      link.href = item.url;
+      link.textContent = item.title;
+      highlight(link, termsRe);
+
+      const desc = document.createElement('p');
+      desc.className = 'result-desc';
+      desc.textContent = item.description;
+      highlight(desc, termsRe);
+
+      row.append(meta, link, desc);
+      resultsEl.appendChild(row);
+    }
+
+    if (hits.length === 0) {
+      const empty = document.createElement('p');
+      empty.className = 'result-desc';
+      empty.textContent = `没有找到与「${query.trim()}」相关的文章。换个关键词试试。`;
+      resultsEl.appendChild(empty);
+    }
+  }
+
+  let timer: ReturnType<typeof setTimeout>;
+  input?.addEventListener('input', () => {
+    clearTimeout(timer);
+    const q = input.value;
+    timer = setTimeout(() => render(q), 120);
+  });
+</script>

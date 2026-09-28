@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../utils/site';
+---
+
+<BaseLayout title="页面不存在" description="你要找的页面不存在。">
+  <div class="nf mono">
+    <p><span class="prompt">❯</span> cd <span class="path" id="nf-path">~/某处</span></p>
+    <p class="err">cd: no such file or directory</p>
+    <p class="hint">页面不存在，或者已经被移动、删除。</p>
+  </div>
+  <p class="back"><a href={withBase('/')}>← 回到首页</a></p>
+
+  <script is:inline>
+    // GitHub Pages 对所有路径返回同一个 404.html，这里客户端补上真实路径
+    document.getElementById('nf-path').textContent = decodeURI(location.pathname);
+  </script>
+</BaseLayout>
+
+<style>
+  .nf {
+    margin-top: 3.5rem;
+    font-size: 0.9375rem;
+    line-height: 2.1;
+  }
+
+  .path {
+    color: var(--accent);
+  }
+
+  .err {
+    color: var(--text-muted);
+  }
+
+  .hint {
+    font-family: var(--font-sans);
+    color: var(--text-muted);
+    margin-top: 1rem;
+  }
+
+  .back {
+    margin-top: 2.5rem;
+  }
+
+  .back a {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .back a:hover {
+    color: var(--accent);
+  }
+</style>

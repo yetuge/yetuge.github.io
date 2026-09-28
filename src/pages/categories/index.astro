@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { countBy, withBase } from '../../utils/site';
+
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const categories = [...countBy(posts, 'category')].sort((a, b) =>
+  b[1] - a[1] || a[0].localeCompare(b[0], 'zh')
+);
+---
+
+<BaseLayout title="分类" description="按分类浏览全部文章。">
+  <p class="crumb">~/categories/</p>
+  <h1 class="page-title">分类</h1>
+
+  <div class="rows">
+    {
+      categories.map(([category, count]) => (
+        <div class="cat-row">
+          <a class="cat-link" href={withBase(`/categories/${category}/`)}>
+            <span class="cat-name">[{category}]</span>
+            <span class="cat-desc mono">{count} 篇</span>
+          </a>
+        </div>
+      ))
+    }
+  </div>
+
+  {categories.length === 0 && <p class="empty mono">还没有任何分类。</p>}
+</BaseLayout>
+
+<style>
+  .cat-row {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cat-link {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 0;
+  }
+
+  .cat-link:hover .cat-name {
+    color: var(--accent);
+  }
+
+  .cat-name {
+    font-size: 1.0625rem;
+    font-weight: 650;
+    transition: color 0.15s;
+  }
+
+  .cat-desc {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  .empty {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+</style>

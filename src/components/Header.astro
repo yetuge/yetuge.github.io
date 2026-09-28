@@ -1,0 +1,150 @@
+---
+import { SITE } from '../config';
+import { withBase } from '../utils/site';
+
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/archive/', label: '归档' },
+  { href: '/tags/', label: '标签' },
+  { href: '/categories/', label: '分类' },
+  { href: '/about/', label: '关于' },
+  { href: '/search/', label: '搜索' },
+];
+---
+
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="brand mono" href={withBase('/')} aria-label="回到首页">~/{SITE.name}<span
+        class="cursor"
+        aria-hidden="true"></span></a>
+    <nav class="site-nav" aria-label="主导航">
+      {
+        nav.map((item) => {
+          const full = withBase(item.href);
+          const active = path === full || path.startsWith(full);
+          return (
+            <a class:list={['nav-link mono', { active }]} aria-current={active ? 'page' : undefined} href={full}>
+              {item.label}
+            </a>
+          );
+        })
+      }
+      <button id="theme-toggle" type="button" class="theme-toggle" aria-label="切换深浅色模式">
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+        </svg>
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.9rem;
+  }
+
+  .brand {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .brand .cursor {
+    height: 1em;
+    width: 0.5em;
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, 2.5vw, 1.1rem);
+  }
+
+  .nav-link {
+    font-size: 0.8438rem;
+    color: var(--text-muted);
+    padding-block: 0.2rem;
+    transition: color 0.15s;
+  }
+
+  .nav-link:hover {
+    color: var(--text);
+  }
+
+  .nav-link.active {
+    color: var(--accent);
+  }
+
+  .nav-link.active::before {
+    content: "❯ ";
+    font-size: 0.75rem;
+  }
+
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .theme-toggle:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* 浅色显示月亮（点击变暗），深色显示太阳 */
+  .icon-moon {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .icon-sun {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .icon-moon {
+    display: block;
+  }
+
+  @media (max-width: 480px) {
+    .nav-link {
+      font-size: 0.8125rem;
+    }
+
+    .nav-link.active::before {
+      content: "";
+    }
+  }
+</style>
+
+<script>
+  const btn = document.getElementById('theme-toggle');
+  btn?.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('theme', next);
+  });
+</script>

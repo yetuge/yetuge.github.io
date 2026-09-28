@@ -1,0 +1,166 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { fmtDate, readingTime, withBase } from '../../utils/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, description, pubDate, updatedDate, tags, category } = post.data;
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate - a.data.pubDate
+);
+const idx = posts.findIndex((p) => p.id === post.id);
+const newer = idx > 0 ? posts[idx - 1] : undefined;
+const older = idx >= 0 && idx < posts.length - 1 ? posts[idx + 1] : undefined;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="post">
+    <header>
+      <p class="crumb">~/posts/{post.id}/</p>
+      <h1 class="post-title">{title}</h1>
+      <div class="post-meta mono">
+        <time datetime={pubDate.toISOString()}>{fmtDate(pubDate)}</time>
+        {
+          category && (
+            <a class="meta-cat" href={withBase(`/categories/${category}/`)}>
+              [{category}]
+            </a>
+          )
+        }
+        <span>{readingTime(post.body ?? '')}</span>
+      </div>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <footer class="post-footer">
+      {
+        tags.length > 0 && (
+          <div class="post-tags mono">
+            {tags.map((tag) => (
+              <a href={withBase(`/tags/${tag}/`)}>#{tag}</a>
+            ))}
+          </div>
+        )
+      }
+      {
+        updatedDate && (
+          <p class="updated mono">最后更新于 {fmtDate(updatedDate)}</p>
+        )
+      }
+      <nav class="post-nav mono" aria-label="相邻文章">
+        {
+          newer ? (
+            <a class="nav-newer" href={withBase(`/posts/${newer.id}/`)}>
+              <span class="dir">next</span> {newer.data.title}
+            </a>
+          ) : (
+            <span></span>
+          )
+        }
+        {
+          older && (
+            <a class="nav-older" href={withBase(`/posts/${older.id}/`)}>
+              <span class="dir">prev</span> {older.data.title}
+            </a>
+          )
+        }
+      </nav>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-title {
+    font-size: clamp(1.65rem, 4.5vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 0.9rem;
+    letter-spacing: 0.01em;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 1.1rem;
+    font-size: 0.8438rem;
+    color: var(--text-muted);
+    padding-bottom: 1.6rem;
+    margin-bottom: 2.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .meta-cat {
+    color: var(--accent);
+  }
+
+  .meta-cat:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    font-size: 0.8438rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .post-tags a {
+    color: var(--text-muted);
+    transition: color 0.15s;
+  }
+
+  .post-tags a:hover {
+    color: var(--accent);
+  }
+
+  .updated {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin: 0 0 2rem;
+  }
+
+  .post-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.875rem;
+  }
+
+  .post-nav a {
+    display: block;
+    max-width: 46%;
+    color: var(--text-muted);
+    transition: color 0.15s;
+  }
+
+  .post-nav a:hover {
+    color: var(--accent);
+  }
+
+  .dir {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-bottom: 0.15rem;
+  }
+
+  .nav-older {
+    margin-left: auto;
+    text-align: right;
+  }
+</style>

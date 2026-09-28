@@ -1,0 +1,60 @@
+---
+import { SITE, SITE_START_YEAR } from '../config';
+import { withBase } from '../utils/site';
+
+const year = new Date().getFullYear();
+const yearRange = year > SITE_START_YEAR ? `${SITE_START_YEAR}–${year}` : `${year}`;
+---
+
+<footer class="site-footer">
+  <div class="shell footer-inner mono">
+    <span>&copy; {yearRange} {SITE.author}</span>
+    <span class="footer-links">
+      <a href={withBase('/rss.xml')}>rss</a>
+      <a href={withBase('/sitemap-index.xml')}>sitemap</a>
+      {
+        SITE.links.github && (
+          <a href={SITE.links.github} target="_blank" rel="noopener noreferrer">
+            github
+          </a>
+        )
+      }
+      <span class="exit">exit 0</span>
+    </span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding-block: 1.2rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.1rem;
+  }
+
+  .footer-links a {
+    color: var(--text-muted);
+    transition: color 0.15s;
+  }
+
+  .footer-links a:hover {
+    color: var(--accent);
+  }
+
+  .exit {
+    color: var(--border-strong);
+    user-select: none;
+  }
+</style>
