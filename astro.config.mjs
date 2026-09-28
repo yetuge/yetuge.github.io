@@ -3,8 +3,8 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  // 主部署：Vercel（push 自动部署）；GitHub Pages 同步镜像（如不再需要可删 .github/workflows/deploy.yml）
-  site: 'https://yetuge-blog.vercel.app',
+  // 主域名：https://y1y1.me（Vercel 托管，push 自动部署）；GitHub Pages 同步镜像
+  site: 'https://y1y1.me',
   base: '/',
   trailingSlash: 'always',
   integrations: [sitemap()],
